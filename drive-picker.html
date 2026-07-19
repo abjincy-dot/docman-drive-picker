@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>DOCMAN — Select from Google Drive</title>
+<style>
+  body {
+    font-family: -apple-system, sans-serif;
+    background: #0c1120;
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+  }
+  .box { max-width: 320px; padding: 24px; }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid #334155;
+    border-top-color: #60a5fa;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  button {
+    background: #2563eb; color: white; border: none;
+    padding: 10px 20px; border-radius: 8px; font-size: 15px;
+    cursor: pointer; margin-top: 12px;
+  }
+  #errorBox { color: #f87171; margin-top: 12px; display: none; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <p id="statusText">Connecting to Google Drive…</p>
+    <div id="errorBox"></div>
+    <button id="retryBtn" style="display:none" onclick="startAuth()">Try again</button>
+  </div>
+
+<script src="https://accounts.google.com/gsi/client"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script>
+  // ---- Fill these in with your own values from Google Cloud Console ----
+  const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+  const API_KEY = 'YOUR_API_KEY';
+  // The custom scheme the native app listens for (must match AndroidManifest.xml)
+  const APP_CALLBACK = 'docman://oauth-callback';
+  // ------------------------------------------------------------------
+
+  let tokenClient;
+  let pickerInited = false;
+  let gisInited = false;
+
+  function setStatus(msg) {
+    document.getElementById('statusText').textContent = msg;
+  }
+  function showError(msg) {
+    document.getElementById('statusText').style.display = 'none';
+    document.querySelector('.spinner').style.display = 'none';
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.style.display = 'block';
+    document.getElementById('retryBtn').style.display = 'inline-block';
+  }
+
+  function gapiLoaded() {
+    gapi.load('picker', () => { pickerInited = true; });
+  }
+
+  function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/drive.readonly',
+      callback: (resp) => {
+        if (resp.error) {
+          showError('Sign-in failed: ' + resp.error);
+          return;
+        }
+        showPicker(resp.access_token);
+      },
+    });
+    gisInited = true;
+  }
+
+  function startAuth() {
+    document.getElementById('retryBtn').style.display = 'none';
+    document.getElementById('errorBox').style.display = 'none';
+    document.getElementById('statusText').style.display = 'block';
+    document.querySelector('.spinner').style.display = 'block';
+    setStatus('Connecting to Google Drive…');
+    if (!gisInited || !pickerInited) {
+      setTimeout(startAuth, 300);
+      return;
+    }
+    tokenClient.requestAccessToken({ prompt: 'consent' });
+  }
+
+  function showPicker(accessToken) {
+    setStatus('Choose a file…');
+    const view = new google.picker.DocsView(google.picker.ViewId.DOCS)
+      .setIncludeFolders(false)
+      .setSelectFolderEnabled(false);
+
+    const picker = new google.picker.PickerBuilder()
+      .addView(view)
+      .setOAuthToken(accessToken)
+      .setDeveloperKey(API_KEY)
+      .setCallback((data) => pickerCallback(data, accessToken))
+      .build();
+    picker.setVisible(true);
+  }
+
+  function pickerCallback(data, accessToken) {
+    if (data.action === google.picker.Action.PICKED) {
+      const file = data.docs[0];
+      const params = new URLSearchParams({
+        fileId: file.id,
+        fileName: file.name,
+        mimeType: file.mimeType,
+        accessToken: accessToken,
+      });
+      // Hand off to the native app.
+      window.location.href = APP_CALLBACK + '?' + params.toString();
+    } else if (data.action === google.picker.Action.CANCEL) {
+      window.location.href = APP_CALLBACK + '?cancelled=1';
+    }
+  }
+
+  window.onload = () => {
+    gapiLoaded();
+    gisLoaded();
+    // Poll until both libraries are ready, then start.
+    const waitReady = setInterval(() => {
+      if (gisInited && pickerInited) {
+        clearInterval(waitReady);
+        startAuth();
+      }
+    }, 200);
+  };
+</script>
+</body>
+</html>
