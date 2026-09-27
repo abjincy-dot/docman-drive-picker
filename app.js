@@ -1,4 +1,4 @@
-* =========================================================
+/* =========================================================
    UAE Trip Journal — app.js
    Book-style 3D page flip (click / keys / drag-to-scrub),
    desk-calendar flip, flip cards, View Transitions.
