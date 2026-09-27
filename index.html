@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#081016"><title>UAE Trip AI</title>
+<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div><span class="eyebrow">UAE TRIP AI</span><h1>Explore UAE <span>🇦🇪</span></h1><p>Visual family trip planner · places · food · routes</p></div>
+  <button id="theme" class="icon">☼</button>
+</header>
+
+<section class="hero">
+  <div><span class="live">● FAMILY MODE</span><h2>Plan the place.<br>Plan the food.</h2>
+  <p>See real attractions and food stops, group them by area, and build a practical day instead of jumping across the UAE.</p>
+  <div class="hero-actions"><button onclick="setView('places')">Explore places</button><button class="ghost" onclick="setView('food')">Find food</button></div></div>
+  <div class="hero-stat"><b>7</b><span>DAYS</span><small>Dubai · Abu Dhabi · Sharjah</small></div>
+</section>
+
+<nav class="tabs">
+<button class="tab active" data-view="today">Today</button>
+<button class="tab" data-view="places">Places</button>
+<button class="tab" data-view="food">Food</button>
+<button class="tab" data-view="plan">7-Day Plan</button>
+<button class="tab" data-view="routes">Routes</button>
+</nav>
+
+<main>
+<section id="today" class="view active">
+<div class="section-title"><div><span class="eyebrow">DAY 1</span><h2>Downtown Dubai</h2></div><span class="badge">FAMILY PACE</span></div>
+<div class="today-grid">
+<div class="big-place"><img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=85" alt="Dubai skyline"><div class="image-label"><small>DUBAI · DOWNTOWN</small><h3>Burj Khalifa</h3><p>Dubai, UAE</p></div></div>
+<div class="today-info"><span class="time">10:00 · NEXT STOP</span><h3>Burj Khalifa → Dubai Mall</h3><p>Keep the morning indoors, then eat nearby instead of crossing the city.</p>
+<div class="info-row"><span>📍</span><div><b>Location</b><small>Downtown Dubai</small></div></div>
+<div class="info-row"><span>🍽️</span><div><b>Food nearby</b><small>Dubai Mall dining</small></div></div>
+<div class="info-row"><span>🚇</span><div><b>Transport</b><small>Metro Red Line / taxi</small></div></div>
+<a class="primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Burj+Khalifa+Dubai">Open in Maps ↗</a></div>
+</div>
+<div class="timeline"><article class="stop done"><i></i><div><small>08:30</small><b>Breakfast</b><p>Start early before the day gets busy.</p></div><strong>✓</strong></article>
+<article class="stop current"><i></i><div><small>10:00</small><b>Burj Khalifa</b><p>Observation decks and Downtown views.</p></div><strong>NOW</strong></article>
+<article class="stop"><i></i><div><small>13:00</small><b>Lunch · Dubai Mall</b><p>Stay close and use the mall for cooling/rest time.</p></div></article>
+<article class="stop"><i></i><div><small>18:00</small><b>Dubai Fountain area</b><p>Evening Downtown stop.</p></div></article></div>
+<div class="ai-box"><b>AI TRIP LOGIC</b><p>Group nearby places together. With a family, one strong area per half-day is usually more practical than stacking distant attractions.</p></div>
+</section>
+
+<section id="places" class="view">
+<div class="section-title"><div><span class="eyebrow">REAL PLACES</span><h2>Where do you want to go?</h2></div></div>
+<div class="filters"><button class="filter active" data-city="all">All</button><button class="filter" data-city="Dubai">Dubai</button><button class="filter" data-city="Abu Dhabi">Abu Dhabi</button><button class="filter" data-city="Sharjah">Sharjah</button></div>
+<div id="placeGrid" class="grid"></div>
+</section>
+
+<section id="food" class="view">
+<div class="section-title"><div><span class="eyebrow">REAL FOOD STOPS</span><h2>What should we eat?</h2></div></div>
+<div class="filters"><button class="food-filter active" data-type="all">All</button><button class="food-filter" data-type="Emirati">Emirati</button><button class="food-filter" data-type="Breakfast">Breakfast</button><button class="food-filter" data-type="Family">Family</button></div>
+<div id="foodGrid" class="food-grid"></div>
+</section>
+
+<section id="plan" class="view">
+<div class="section-title"><div><span class="eyebrow">ITINERARY</span><h2>7 days without backtracking</h2></div></div>
+<div id="days"></div>
+</section>
+
+<section id="routes" class="view">
+<div class="section-title"><div><span class="eyebrow">ROUTES</span><h2>Move intelligently</h2></div></div>
+<div class="route-card"><span>🚇</span><div><b>Dubai Metro</b><p>Use for Downtown and major Dubai corridors.</p><small>LOW TRAFFIC · GOOD FOR FAMILIES</small></div></div>
+<div class="route-card"><span>🚕</span><div><b>Taxi</b><p>Useful when the stroller, heat or multiple bags make walking impractical.</p><small>DOOR TO DOOR</small></div></div>
+<div class="route-card"><span>🚗</span><div><b>Rental car</b><p>Useful for Dubai ↔ Abu Dhabi and days with several spread-out stops.</p><small>LONG DISTANCE</small></div></div>
+<div class="route-map"><div class="map-line"></div><span class="pin p1">DUBAI</span><span class="pin p2">SHARJAH</span><span class="pin p3">ABU DHABI</span><div class="map-note">The route screen is ready for live Maps/transport APIs.</div></div>
+</section>
+</main>
+<footer>UAE Trip AI · prototype with real attraction and restaurant references</footer>
+</div>
+<script src="app.js"></script>
+</body></html>
